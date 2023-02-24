@@ -1,5 +1,7 @@
+import 'package:intl/intl.dart';
+
 class TodoModel {
-  int id;
+  int? id;
   String task;
   bool done;
   String createdBy;
@@ -9,7 +11,7 @@ class TodoModel {
   DateTime? updatedAt;
 
   TodoModel({
-    required this.id,
+    this.id,
     required this.task,
     this.done = false,
     required this.createdBy,
@@ -26,12 +28,24 @@ class TodoModel {
     return TodoModel(
       id: data['id'],
       task: data['task'],
-      done: data['done'],
+      done: data['done'] == 1 ? true : false,
       createdBy: data['created_by'],
-      expireDate: data['expire_date'],
-      remarks: data['remarks'],
-      createdAt: data['created_at'],
-      updatedAt: data['updated_at'],
+      expireDate: DateFormat.yMd().parse(data['expire_date']),
+      remarks: data['remarks'].split(',').cast<String>(),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(data['created_at']),
+      updatedAt: DateTime.parse(data['updated_at'].split('T').first),
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'task': task,
+      'done': done ? 1 : 0,
+      'created_by': createdBy,
+      'expire_date': DateFormat.yMd().format(expireDate),
+      'remarks': remarks.join(','),
+      'created_at': createdAt!.millisecondsSinceEpoch,
+      'updated_at': updatedAt!.toIso8601String(),
+    };
   }
 }

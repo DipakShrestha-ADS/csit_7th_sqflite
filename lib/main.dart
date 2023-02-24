@@ -1,34 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:sec_b_sqflite/screens/home_page.dart';
-import 'package:sqflite/sqflite.dart' as sqflite;
+import 'package:sec_b_sqflite/services/sqflite_service.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  ///getting path of documents directory
-  final docPath = await pathProvider.getApplicationDocumentsDirectory();
-  print('doc path: ${docPath.path}');
-
-  ///defining database file name
-  final dbFile = 'todos.db';
-
-  ///joining documents directory path and database file name
-  final dbFilePath = path.join(docPath.path, dbFile);
-  print('db file path: $dbFilePath');
-  final db = await sqflite.openDatabase(
-    dbFilePath,
-    version: 1,
-    onCreate: (database, version) {
-      database.execute(
-        'Create Table todos(id Integer Primary key, task Text, done int, '
-        'created_at int, updated_at Text, created_by Text, '
-        'remarks Text, expire_date Text)',
-      );
-    },
-  );
+  final db = await SqfliteService().establishDatabaseConnection();
   print('db open: ${db.isOpen}');
   runApp(MyApp(
     db: db,

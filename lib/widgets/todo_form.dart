@@ -10,6 +10,7 @@ class TodoForm extends StatelessWidget {
     required this.expireDateController,
     this.done = false,
     this.onDone,
+    this.onTapExpireDate,
   }) : super(key: key);
   final GlobalKey<FormState>? formKey;
   final TextEditingController taskController;
@@ -18,6 +19,7 @@ class TodoForm extends StatelessWidget {
   final TextEditingController expireDateController;
   final bool done;
   final void Function(bool?)? onDone;
+  final void Function()? onTapExpireDate;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -46,15 +48,20 @@ class TodoForm extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Remarks',
                 hintText: 'Add remarks',
+                helperText: 'You can add multiple remarks by separating with comma (,).',
               ),
             ),
-            TextFormField(
-              controller: expireDateController,
-              decoration: InputDecoration(
-                labelText: 'Expire Date',
-                hintText: 'Enter date of expire',
+            GestureDetector(
+              onTap: onTapExpireDate,
+              child: TextFormField(
+                controller: expireDateController,
+                decoration: InputDecoration(
+                  labelText: 'Expire Date',
+                  hintText: 'Enter date of expire',
+                  enabled: false,
+                ),
+                keyboardType: TextInputType.datetime,
               ),
-              keyboardType: TextInputType.datetime,
             ),
             SizedBox(
               height: 20,
