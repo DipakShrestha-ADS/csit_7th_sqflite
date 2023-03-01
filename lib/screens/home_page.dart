@@ -1,8 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sec_b_sqflite/screens/add_todo_screen.dart';
 import 'package:sec_b_sqflite/screens/view_todo_screen.dart';
+import 'package:sec_b_sqflite/stateManagement/provider/counter_change_notifier.dart';
+import 'package:sec_b_sqflite/stateManagement/provider/counter_provider_page.dart';
+import 'package:sec_b_sqflite/stateManagement/stacked/counter_stacked_page.dart';
+import 'package:sec_b_sqflite/stateManagement/stacked/counter_view_model.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:stacked/stacked.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.db}) : super(key: key);
@@ -64,13 +70,39 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) {
+                              return ChangeNotifierProvider.value(
+                                value: CounterChangeNotifier(),
+                                child: CounterProviderPage(),
+                              );
+                            },
+                          ),
+                        );
+                      },
                       icon: Icon(
-                        Icons.home,
+                        Icons.person,
                       ),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) {
+                              return ViewModelBuilder.reactive(
+                                viewModelBuilder: () => CounterViewModel(),
+                                builder: (ctx, vm, child) {
+                                  return CounterStackedPage();
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      },
                       icon: Icon(
                         Icons.home,
                       ),
