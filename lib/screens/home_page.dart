@@ -1,14 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sec_b_sqflite/screens/add_todo_screen.dart';
 import 'package:sec_b_sqflite/screens/view_todo_screen.dart';
+import 'package:sec_b_sqflite/stateManagement/bloc/cubit/counter_bloc_page.dart';
 import 'package:sec_b_sqflite/stateManagement/provider/counter_change_notifier.dart';
 import 'package:sec_b_sqflite/stateManagement/provider/counter_provider_page.dart';
 import 'package:sec_b_sqflite/stateManagement/stacked/counter_stacked_page.dart';
 import 'package:sec_b_sqflite/stateManagement/stacked/counter_view_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:stacked/stacked.dart';
+
+import '../stateManagement/bloc/todo_bloc.dart';
+import '../stateManagement/bloc/todo_event.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.db}) : super(key: key);
@@ -38,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white,
         ),
         onPressed: () async {
-          final todoList = await Navigator.push(
+          /*final todoList = await Navigator.push(
             context,
             CupertinoPageRoute(
               builder: (ctx) {
@@ -50,7 +53,8 @@ class _HomePageState extends State<HomePage> {
           );
           if (todoList != null) {
             setState(() {});
-          }
+          }*/
+          context.read<TodoBloc>().add(GetAllTodo());
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -117,9 +121,18 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) {
+                              return CounterBlocPage();
+                            },
+                          ),
+                        );
+                      },
                       icon: Icon(
-                        Icons.home,
+                        Icons.person,
                       ),
                     ),
                     IconButton(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sec_b_sqflite/services/sqflite_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sec_b_sqflite/stateManagement/bloc/todo_bloc.dart';
+import 'package:sec_b_sqflite/stateManagement/bloc/todo_state.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ViewTodoScreen extends StatefulWidget {
@@ -11,21 +13,29 @@ class ViewTodoScreen extends StatefulWidget {
 
 class _ViewTodoScreenState extends State<ViewTodoScreen> {
   @override
+  void initState() {
+    // context.read<TodoBloc>().add(GetAllTodo());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: SqfliteService().getAllTodos(db: widget.db),
-      builder: (ctx, dataSnap) {
-        if (dataSnap.connectionState == ConnectionState.waiting) {
+    print('view tood build function called');
+    return BlocBuilder<TodoBloc, TodoState>(
+      // future: SqfliteService().getAllTodos(db: widget.db),
+      builder: (ctx, todoState) {
+        print('todo bloc builder called');
+        if (todoState is LoadingState) {
           return const Center(
             child: CircularProgressIndicator(
               color: Colors.deepPurpleAccent,
             ),
           );
         }
-        if (dataSnap.hasError) {
+        if (todoState is ErrorState) {
           return Center(
             child: Text(
-              '${dataSnap.error}',
+              '${todoState.errorMsg}',
               style: const TextStyle(
                 color: Colors.red,
                 fontSize: 18,
@@ -33,8 +43,8 @@ class _ViewTodoScreenState extends State<ViewTodoScreen> {
             ),
           );
         }
-        if (dataSnap.hasData) {
-          final data = dataSnap.data;
+        if (todoState is SuccessState) {
+          final data = todoState.todoList;
           if (data != null) {
             return ListView.separated(
               itemCount: data.length,
